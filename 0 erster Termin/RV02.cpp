@@ -1,7 +1,9 @@
 /*
    RV02: Median und Sobel
    
-   Autor: .....................
+   Autor: 	Marvin Herrmann	2120896
+			Torben Fischer
+			Ralf Prediger	2112902
    HAW-University of Applied Sciences - Hamburg,Germany
 
  */ 
@@ -46,21 +48,21 @@ namespace lti {
 	/*---------------------*/
 	/* loaders and viewers */
     /*---------------------*/
-    loadBMP loader;                         // object for loading .bmp-images
+    loadBMP loader;                         		// object for loading .bmp-images
 
-    viewer view("Original");                // object for visualizing images
-	viewer viewMedian("Median");
-	viewer viewSobelGradient("SobelGradient");
-	viewer viewSobelDirection("SobelDirection");
+    viewer view("Original");                		// object for visualizing original picture
+	viewer viewMedian("Median");					// object for visualizing picture modified by median-operator
+	viewer viewSobelGradient("SobelGradient");		// object for visualizing picture modified by sobel-operator (gradiant)
+	viewer viewSobelDirection("SobelDirection");	// object for visualizing picture modified by sobel-operator (direction)
 
 	/*---------------------*/
 	/* images & channels   */
     /*---------------------*/
     image img;                              // normalized (color) image
 	channel8  src;  // source picture       // 8-bit-image (source)
-    channel8  dm;  // destination picture  // 8-bit-image (source) 
-	channel8  dsg;  // destination picture  // 8-bit-image (source) 
-	channel8  dsd;  // destination picture  // 8-bit-image (source) 
+    channel8  dm;   // destination picture  // 8-bit-image (dest. median) 
+	channel8  dsg;  // destination picture  // 8-bit-image (dest. sobel gradiant) 
+	channel8  dsd;  // destination picture  // 8-bit-image (dest. sobel direction) 
 
 
 	/*-----------------------------*/
@@ -130,10 +132,12 @@ namespace lti {
 	int newMaskSizeY = MaskSizeY;
 	int newMaskSizeX = MaskSizeX;
 
+	// Wir erlauben nur einen mindest Maskengroesse von 3 x 3
 	if(newMaskSizeY < 3) {
 		newMaskSizeY = 3;
 	}
 
+	// Wenn es eine gerade Maskengroesse gewählt 
 	if(newMaskSizeY%2 == 0) {
 		newMaskSizeY++;
 	}
