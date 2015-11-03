@@ -252,8 +252,8 @@ namespace lti {
 				
 				double Gradientenwinkel = 0;
 
-				// Berechnung des Gradiantenwinkel unter zur Hilfenahme des artans2.
-				// Dank des artans2 muss nicht beachtet werden, dass nicht durch 0 dividiert wird.
+				// Berechnung des Gradientenwinkel unter zur Hilfenahme des artans2.
+				// Dank des artans2 muss nicht beachtet werden, dass durch 0 dividiert wird.
 				Gradientenwinkel = (atan2((double)gySum,(double)gxSum) * 180 / Pi);
 
 				int Gradientenrichtung = 0;
@@ -263,7 +263,7 @@ namespace lti {
 					Gradientenwinkel += 360;
 				}
 
-				 //Bestimmen der Gradiantenrichtung auf Grundlade des errechneten Winkels
+				 //Bestimmen der Gradientenrichtung auf Grundlade des errechneten Winkels
 				if(Gradientenwinkel >= 22.5 && Gradientenwinkel < 67.5) {
 					Gradientenrichtung = 1;
 				} else if(Gradientenwinkel >= 67.5 && Gradientenwinkel < 112.5) {
@@ -279,7 +279,7 @@ namespace lti {
 				} else if(Gradientenwinkel >= 292.5 && Gradientenwinkel < 337.5) {
 					Gradientenrichtung = 7;
 				}
-				//Setzten der Gradidantenrichtung an den Mittelpunkt der Maske
+				//Setzten der Gradidentenrichtung an den Mittelpunkt der Maske
 				//Da es sich um eine statische Maske handelt, werden die Werte fest implementiert
 				DirectionPic[y+1][x+1] = Gradientenrichtung;
 			}
