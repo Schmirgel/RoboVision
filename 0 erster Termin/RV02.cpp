@@ -48,11 +48,11 @@ namespace lti {
 	/*---------------------*/
 	/* loaders and viewers */
 	/*---------------------*/
-	loadBMP loader;                         		// object for loading .bmp-images
+	loadBMP loader;                         	// object for loading .bmp-images
 
-	viewer view("Original");                		// object for visualizing original picture
-	viewer viewMedian("Median");					// object for visualizing picture modified by median-operator
-	viewer viewSobelGradient("SobelGradient");		// object for visualizing picture modified by sobel-operator (gradiant)
+	viewer view("Original");                	// object for visualizing original picture
+	viewer viewMedian("Median");			// object for visualizing picture modified by median-operator
+	viewer viewSobelGradient("SobelGradient");	// object for visualizing picture modified by sobel-operator (gradiant)
 	viewer viewSobelDirection("SobelDirection");	// object for visualizing picture modified by sobel-operator (direction)
 
 	/*---------------------*/
@@ -71,8 +71,8 @@ namespace lti {
 
 	// object to split image into hue, saturation and intensity
 	// hue        = Farbton
-	// saturation = Farbs‰ttigung
-	// intensity  = Intensit‰t (Grauwert)
+	// saturation = Farbs√§ttigung
+	// intensity  = Intensit√§t (Grauwert)
 	splitImageToHSI splitter;
 
 
@@ -132,7 +132,7 @@ namespace lti {
 	int newMaskSizeY = MaskSizeY;
 	int newMaskSizeX = MaskSizeX;
 
-	// Wir erlauben nur eine mindest Maskengroesse von 3 x 3
+	// Wir erlauben nur eine mindest Maskengroesse von 3 x 3 ( Zuerst die Y-Achsen- dann die X-Achsen√ºberpr√ºfung)
 	if(newMaskSizeY < 3)
 	{
 		newMaskSizeY = 3;
@@ -169,12 +169,12 @@ namespace lti {
 			{
 				histogramm[i] = 0;
 			}
-			//Iteration ¸ber den Bilsauschnitt
+			//Iteration √ºber den Bildsauschnitt
 			for(my = y; my < y+newMaskSizeY; my++)
 			{
 				for(mx = x; mx < x+newMaskSizeX; mx++)
 				{
-					//bef¸llen des Histogramm, mit den gefundenen Grauwerten
+					//bef√ºllen des Histogramm, mit den gefundenen Grauwerten
 					Grauwert = sPic[my][mx];
 					histogramm[Grauwert]++;
 				}
@@ -236,7 +236,7 @@ namespace lti {
 				gxSum/=4;
 				gySum/=4;
 
-				//Berechnung des Betrags des Gradianten durch die Formel c = sqrt(a≤ + b≤)
+				//Berechnung des Betrags des Gradianten durch die Formel c = sqrt(a¬≤ + b¬≤)
 				double gxPow = (gxSum*gxSum);
 				double gyPow = (gySum*gySum);
 
@@ -259,7 +259,7 @@ namespace lti {
 					Gradientenwinkel += 360;
 				}
 
-				 //Bestimmen des Gradiantenrichtung auf Grundlade des errechneten Winkels
+				 //Bestimmen der Gradiantenrichtung auf Grundlade des errechneten Winkels
 				if(Gradientenwinkel >= 22.5 && Gradientenwinkel < 67.5) {
 					Gradientenrichtung = 1;
 				} else if(Gradientenwinkel >= 67.5 && Gradientenwinkel < 112.5) {
