@@ -1,1 +1,3 @@
-Es muss noch der Quellcode dkumentiert werden.
+Der Quellcode wurde von Ralf fertig kommentiert.
+
+Eine zweite Partei muss nochmal dagegen lesen.
