@@ -121,10 +121,10 @@ namespace lti {
   /***************************************************************************/
   /* Function definition: ----- Median-operator----                          */
   /***************************************************************************/
-  void RV02::Median(  const channel8& sPic, 		// source picture 
-			    channel8& dPic, 		// destination picture
-			    const int MaskSizeX,	// mask size in x-direction
-			    const int MaskSizeY		// mask size in y-direction
+  void RV02::Median(  	const channel8& sPic, 		// source picture 
+			channel8& dPic, 		// destination picture
+			const int MaskSizeX,	// mask size in x-direction
+			const int MaskSizeY		// mask size in y-direction
 					   )
   {
 	const int PicSizeY = sPic.rows();
