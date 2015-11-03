@@ -1,8 +1,8 @@
 /*
    RV02: Median und Sobel
    
-   Autor: 	Marvin Herrmann	2120896
-			Torben Fischer
+   Autor: 		Marvin Herrmann	2120896
+			Torben Fischer	2112921
 			Ralf Prediger	2112902
    HAW-University of Applied Sciences - Hamburg,Germany
 
@@ -35,11 +35,11 @@ namespace lti {
 
 	/*********************************************/
 	/**** has always to be started (AMei)     ****/
-    /**** if program is without gtk-Widgets   ****/
+	/**** if program is without gtk-Widgets   ****/
 	/*********************************************/
 
 	gtkServer server;
-    server.start();
+	server.start();
 
 	/******************************************/
 	/**** instantiation of used components ****/
@@ -47,20 +47,20 @@ namespace lti {
 
 	/*---------------------*/
 	/* loaders and viewers */
-    /*---------------------*/
-    loadBMP loader;                         		// object for loading .bmp-images
+	/*---------------------*/
+	loadBMP loader;                         		// object for loading .bmp-images
 
-    viewer view("Original");                		// object for visualizing original picture
+	viewer view("Original");                		// object for visualizing original picture
 	viewer viewMedian("Median");					// object for visualizing picture modified by median-operator
 	viewer viewSobelGradient("SobelGradient");		// object for visualizing picture modified by sobel-operator (gradiant)
 	viewer viewSobelDirection("SobelDirection");	// object for visualizing picture modified by sobel-operator (direction)
 
 	/*---------------------*/
 	/* images & channels   */
-    /*---------------------*/
-    image img;                              // normalized (color) image
+	/*---------------------*/
+	image img;                              // normalized (color) image
 	channel8  src;  // source picture       // 8-bit-image (source)
-    channel8  dm;   // destination picture  // 8-bit-image (dest. median) 
+	channel8  dm;   // destination picture  // 8-bit-image (dest. median) 
 	channel8  dsg;  // destination picture  // 8-bit-image (dest. sobel gradiant) 
 	channel8  dsd;  // destination picture  // 8-bit-image (dest. sobel direction) 
 
@@ -69,11 +69,11 @@ namespace lti {
 	/* Image processing components */
 	/*-----------------------------*/
 
-    // object to split image into hue, saturation and intensity
+	// object to split image into hue, saturation and intensity
 	// hue        = Farbton
 	// saturation = Farbsättigung
 	// intensity  = Intensität (Grauwert)
-    splitImageToHSI splitter;
+	splitImageToHSI splitter;
 
 
 
@@ -81,36 +81,36 @@ namespace lti {
 	/*    the program                         */
 	/******************************************/
 
-    // load the source image
-    loader.load("shaft.bmp",img);
+	// load the source image
+	loader.load("shaft.bmp",img);
     
-    // extract the intensity channel only
-    splitter.getIntensity(img,src);
+	// extract the intensity channel only
+	splitter.getIntensity(img,src);
 
-    // determine image size
-    const int rowSize    = src.rows();
-    const int columnSize = src.columns();
+	// determine image size
+	const int rowSize    = src.rows();
+	const int columnSize = src.columns();
 
 
-    // set destination size to source size 
-    dm.resize(rowSize,columnSize,0,false,true);
+	// set destination size to source size 
+	dm.resize(rowSize,columnSize,0,false,true);
 	dsg.resize(rowSize,columnSize,0,false,true);
 	dsd.resize(rowSize,columnSize,0,false,true);
 
     
-    Median(src,dm,9,9);
+	Median(src,dm,9,9);
 
 	Sobel(src,dsg,dsd);
 
 
 
 	// view pictures
-    view.show(src);
-    viewMedian.show(dm);
+	view.show(src);
+	viewMedian.show(dm);
 	viewSobelGradient.show(dsg);
 	viewSobelDirection.show(dsd);
 
-    getchar();
+	getchar();
 
   }
 
@@ -121,10 +121,10 @@ namespace lti {
   /***************************************************************************/
   /* Function definition: ----- Median-operator----                          */
   /***************************************************************************/
-  void RV02::Median(  const	     channel8& sPic, 	// source picture 
-								 channel8& dPic, 	// destination picture
-	                   const int MaskSizeX,		    // mask size in x-direction
-					   const int MaskSizeY		 	// mask size in y-direction
+  void RV02::Median(  const channel8& sPic, 		// source picture 
+			    channel8& dPic, 		// destination picture
+			    const int MaskSizeX,	// mask size in x-direction
+			    const int MaskSizeY		// mask size in y-direction
 					   )
   {
 	const int PicSizeY = sPic.rows();
@@ -132,46 +132,62 @@ namespace lti {
 	int newMaskSizeY = MaskSizeY;
 	int newMaskSizeX = MaskSizeX;
 
-	// Wir erlauben nur einen mindest Maskengroesse von 3 x 3
-	if(newMaskSizeY < 3) {
+	// Wir erlauben nur eine mindest Maskengroesse von 3 x 3
+	if(newMaskSizeY < 3)
+	{
 		newMaskSizeY = 3;
 	}
 
-	// Wenn es eine gerade Maskengroesse gewählt 
-	if(newMaskSizeY%2 == 0) {
+	// Wenn eine gerade Maskengroesse gewaehlt wurde,
+	// werden durch addition mit 1 die Zahlen ungerade
+	if(newMaskSizeY%2 == 0)
+	{
 		newMaskSizeY++;
 	}
 
-	if(newMaskSizeX < 3) {
+	if(newMaskSizeX < 3)
+	{
 		newMaskSizeX = 3;
 	}
 
-	if(newMaskSizeX%2 == 0){
+	if(newMaskSizeX%2 == 0)
+	{
 		newMaskSizeX++;
 	}
-
+	
 	int histogramm[256];
 	unsigned char Grauwert;
 	int x,y,mx,my;
 	int medianIndex = ((MaskSizeY*MaskSizeX)+1)/2;
 
-	for(y=0; y<PicSizeY-(newMaskSizeY); y++) {
-		for(x=0; x<PicSizeX-(newMaskSizeY); x++) {
-			for(int i = 0; i < 256; i++) {
+	for(y=0; y<PicSizeY-(newMaskSizeY); y++) 
+	{
+		for(x=0; x<PicSizeX-(newMaskSizeY); x++) 
+		{
+			// Inizalisierung des Histogramm mit 0
+			for(int i = 0; i < 256; i++)
+			{
 				histogramm[i] = 0;
 			}
-			for(my = y; my < y+newMaskSizeY; my++) {
-				for(mx = x; mx < x+newMaskSizeX; mx++) {
+			//Iteration über den Bilsauschnitt
+			for(my = y; my < y+newMaskSizeY; my++)
+			{
+				for(mx = x; mx < x+newMaskSizeX; mx++)
+				{
+					//befüllen des Histogramm, mit den gefundenen Grauwerten
 					Grauwert = sPic[my][mx];
 					histogramm[Grauwert]++;
 				}
 			}
 			int counter = 0;
 			int zaehler = 0;
-			while(counter < medianIndex) {
+			// Berechnung des Median mit Hilfe des Histogramms
+			while(counter < medianIndex)
+			{
 				counter += histogramm[zaehler];
 				zaehler++;
 			}
+			//Setzten des neuen Grauwertes in der Mitte der Maske
 			dPic[y+((newMaskSizeY+1)/2)][x+((newMaskSizeX+1)/2)] = zaehler;
 		}
 	}
@@ -179,11 +195,11 @@ namespace lti {
   }
 
   /***************************************************************************/
-  /* Function definition: ----- Median-operator----                          */
+  /* Function definition: ----- Sobel-operator----                          */
   /***************************************************************************/
-  void RV02::Sobel(  const	     channel8& sPic, 			// source picture 
-								 channel8& GradientPic, 	// destination picture
-								 channel8& DirectionPic 	// destination picture
+  void RV02::Sobel(  		const channel8& sPic,	// source picture 
+				channel8& GradientPic, 	// Sobel Gradiant picture
+				channel8& DirectionPic 	// Sobel Direction picture
 					   )
   {
 	  	const int PicSizeY = sPic.rows();
@@ -192,11 +208,14 @@ namespace lti {
 		
 		unsigned char Grauwert;
 
-		for(y = 0; y < (PicSizeY-3); y++){
-			for(x = 0; x < (PicSizeX-3); x++){
+		for(y = 0; y < (PicSizeY-3); y++)
+		{
+			for(x = 0; x < (PicSizeX-3); x++)
+			{
 				int gxSum = 0;
 				int gySum = 0;
 
+				//Berechnung des Gx Wertes
 				gxSum += sPic[y][x]*-1;
 				gxSum += sPic[y+1][x]*-2;
 				gxSum += sPic[y+2][x]*-1;
@@ -205,6 +224,7 @@ namespace lti {
 				gxSum += sPic[y+1][x+2]*2;
 				gxSum += sPic[y+2][x+2];
 
+				//Berechnung des Gy Wertes
 				gySum += sPic[y][x]*-1;
 				gySum += sPic[y][x+1]*-2;
 				gySum += sPic[y][x+2]*-1;
@@ -216,25 +236,30 @@ namespace lti {
 				gxSum/=4;
 				gySum/=4;
 
+				//Berechnung des Betrags des Gradianten durch die Formel c = sqrt(a² + b²)
 				double gxPow = (gxSum*gxSum);
 				double gyPow = (gySum*gySum);
 
 				int Gradient = sqrt(gxPow+gyPow);
 
+				//Setzten des berrechneten Betrags an den Mittelpunkt der Maske
+				//Da es sich um eine statische Maske handel, wir die Maske fest definiert
 				GradientPic[y+1][x+1] = Gradient;
 				
 				double Gradientenwinkel = 0;
 
-				//if(gxSum!=0) {
-					Gradientenwinkel = (atan2((double)gySum,(double)gxSum) * 180 / Pi);
-				//}
+				// Berechnung des Gradiantenwinkel unter zur Hilfenahme des artans2
+				// Dank des artans2 muss nicht beachtet werden, dass nicht durch 0 dividiert wird
+				Gradientenwinkel = (atan2((double)gySum,(double)gxSum) * 180 / Pi);
 
 				int Gradientenrichtung = 0;
 
-				if(Gradientenwinkel < -22.5) {
+				if(Gradientenwinkel < -22.5)
+				{
 					Gradientenwinkel += 360;
 				}
 
+				 //Bestimmen des Gradiantenrichtung auf Grundlade des errechneten Winkels
 				if(Gradientenwinkel >= 22.5 && Gradientenwinkel < 67.5) {
 					Gradientenrichtung = 1;
 				} else if(Gradientenwinkel >= 67.5 && Gradientenwinkel < 112.5) {
