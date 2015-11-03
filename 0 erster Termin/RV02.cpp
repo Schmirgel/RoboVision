@@ -58,11 +58,11 @@ namespace lti {
 	/*---------------------*/
 	/* images & channels   */
 	/*---------------------*/
-	image img;                              // normalized (color) image
-	channel8  src;  // source picture       // 8-bit-image (source)
-	channel8  dm;   // destination picture  // 8-bit-image (dest. median) 
-	channel8  dsg;  // destination picture  // 8-bit-image (dest. sobel gradiant) 
-	channel8  dsd;  // destination picture  // 8-bit-image (dest. sobel direction) 
+	image img;      // normalized (color) image
+	channel8  src;  // 8-bit-image (source)
+	channel8  dm;   // 8-bit-image (dest. median) 
+	channel8  dsg;  // 8-bit-image (dest. sobel gradiant) 
+	channel8  dsd; 	// 8-bit-image (dest. sobel direction) 
 
 
 	/*-----------------------------*/
@@ -121,11 +121,11 @@ namespace lti {
   /***************************************************************************/
   /* Function definition: ----- Median-operator----                          */
   /***************************************************************************/
-  void RV02::Median(  	const channel8& sPic, 		// source picture 
-			channel8& dPic, 		// destination picture
+  void RV02::Median(	const channel8& sPic, 	// source picture 
+			channel8& dPic, 	// destination picture
 			const int MaskSizeX,	// mask size in x-direction
-			const int MaskSizeY		// mask size in y-direction
-					   )
+			const int MaskSizeY	// mask size in y-direction
+			)
   {
 	const int PicSizeY = sPic.rows();
 	const int PicSizeX = sPic.columns();
@@ -159,7 +159,8 @@ namespace lti {
 	unsigned char Grauwert;
 	int x,y,mx,my;
 	int medianIndex = ((MaskSizeY*MaskSizeX)+1)/2;
-
+	
+	//Iteration ueber des Quellbild
 	for(y=0; y<PicSizeY-(newMaskSizeY); y++) 
 	{
 		for(x=0; x<PicSizeX-(newMaskSizeY); x++) 
@@ -174,7 +175,7 @@ namespace lti {
 			{
 				for(mx = x; mx < x+newMaskSizeX; mx++)
 				{
-					//befüllen des Histogramm, mit den gefundenen Grauwerten
+					//Befüllen des Histogramm, mit den gefundenen Grauwerten
 					Grauwert = sPic[my][mx];
 					histogramm[Grauwert]++;
 				}
@@ -197,10 +198,10 @@ namespace lti {
   /***************************************************************************/
   /* Function definition: ----- Sobel-operator----                          */
   /***************************************************************************/
-  void RV02::Sobel(  		const channel8& sPic,	// source picture 
-				channel8& GradientPic, 	// Sobel Gradiant picture
-				channel8& DirectionPic 	// Sobel Direction picture
-					   )
+  void RV02::Sobel(	const channel8& sPic,	// source picture 
+			channel8& GradientPic, 	// Sobel Gradiant picture
+			channel8& DirectionPic 	// Sobel Direction picture
+			)
   {
 	  	const int PicSizeY = sPic.rows();
 		const int PicSizeX = sPic.columns();
@@ -208,6 +209,7 @@ namespace lti {
 		
 		unsigned char Grauwert;
 
+		//Iteration ueber das Quellbild
 		for(y = 0; y < (PicSizeY-3); y++)
 		{
 			for(x = 0; x < (PicSizeX-3); x++)
@@ -215,7 +217,7 @@ namespace lti {
 				int gxSum = 0;
 				int gySum = 0;
 
-				//Berechnung des Gx Wertes
+				// begin: Berechnung des Gx Wertes
 				gxSum += sPic[y][x]*-1;
 				gxSum += sPic[y+1][x]*-2;
 				gxSum += sPic[y+2][x]*-1;
@@ -223,8 +225,9 @@ namespace lti {
 				gxSum += sPic[y][x+2];
 				gxSum += sPic[y+1][x+2]*2;
 				gxSum += sPic[y+2][x+2];
-
-				//Berechnung des Gy Wertes
+				// end
+				
+				// begin: Berechnung des Gy Wertes
 				gySum += sPic[y][x]*-1;
 				gySum += sPic[y][x+1]*-2;
 				gySum += sPic[y][x+2]*-1;
@@ -232,6 +235,7 @@ namespace lti {
 				gySum += sPic[y+2][x];
 				gySum += sPic[y+2][x+1]*2;
 				gySum += sPic[y+2][x+2];
+				// end
 
 				gxSum/=4;
 				gySum/=4;
@@ -242,14 +246,14 @@ namespace lti {
 
 				int Gradient = sqrt(gxPow+gyPow);
 
-				//Setzten des berrechneten Betrags an den Mittelpunkt der Maske
-				//Da es sich um eine statische Maske handel, wir die Maske fest definiert
+				//Setzten des berrechneten Betrags an den Mittelpunkt der Maske.
+				//Da es sich um eine statische Maske handelt, werden die Werte fest implementiert
 				GradientPic[y+1][x+1] = Gradient;
 				
 				double Gradientenwinkel = 0;
 
-				// Berechnung des Gradiantenwinkel unter zur Hilfenahme des artans2
-				// Dank des artans2 muss nicht beachtet werden, dass nicht durch 0 dividiert wird
+				// Berechnung des Gradiantenwinkel unter zur Hilfenahme des artans2.
+				// Dank des artans2 muss nicht beachtet werden, dass nicht durch 0 dividiert wird.
 				Gradientenwinkel = (atan2((double)gySum,(double)gxSum) * 180 / Pi);
 
 				int Gradientenrichtung = 0;
@@ -275,6 +279,8 @@ namespace lti {
 				} else if(Gradientenwinkel >= 292.5 && Gradientenwinkel < 337.5) {
 					Gradientenrichtung = 7;
 				}
+				//Setzten der Gradidantenrichtung an den Mittelpunkt der Maske
+				//Da es sich um eine statische Maske handelt, werden die Werte fest implementiert
 				DirectionPic[y+1][x+1] = Gradientenrichtung;
 			}
 		}
