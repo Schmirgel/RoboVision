@@ -1,7 +1,7 @@
 /*
    RV02: Median und Sobel
    
-   Autor: 		Marvin Herrmann	2120896
+   Autor: 	Marvin Herrmann	2120896
 			Torben Fischer	2112921
 			Ralf Prediger	2112902
    HAW-University of Applied Sciences - Hamburg,Germany
