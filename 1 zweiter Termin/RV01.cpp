@@ -50,16 +50,20 @@ namespace lti {
     loadBMP loader;                         // object for loading .bmp-images
 
     viewer view("Original");                // object for visualizing images
-	viewer viewTransformed("NearestNeighborInterpolation");
-	viewer viewbilin("BilineareInterpolation");
+	viewer viewAffiNNI("AffiNearestNeighborInterpolation");
+	viewer viewAffiBilin("AffiBilineareInterpolation");
+	viewer view4PointNNI("4PointNearestNeighborInterpolation");
+	viewer view4PointBilin("4PointBilineareInterpolation");
 
 	/*---------------------*/
 	/* images & channels   */
     /*---------------------*/
-    image img;                              // normalized (color) image
-	channel8  src;  // source picture       // 8-bit-image (source)
-    channel8  affinNNI;  // affin Neares Neighbor  // 8-bit-image (source) 
-    channel8  affinBilin;  // bilineare Interpolation  // 8-bit-image (source) 
+    image img;													// normalized (color) image
+	channel8  src;			// source picture					// 8-bit-image (source)
+    channel8  affinNNI;		// affin Neares Neighbor			// 8-bit-image (destination) 
+    channel8  affinBilin;	// affin bilineare Interpolation	// 8-bit-image (source) 
+	channel8  fPointNNI;	// 4Point Neares Neighbor			// 8-bit-image (source) 
+	channel8  fPointBilin;	// 4Point bilineare Interpolation	// 8-bit-image (source) 
 
 
 	/*-----------------------------*/
@@ -92,7 +96,14 @@ namespace lti {
     // set destination size to source size 
     affinNNI.resize(rowSize,columnSize,0,false,true);
 	affinBilin.resize(rowSize,columnSize,0,false,true);
+	fPointNNI.resize(rowSize,columnSize,0,false,true);
+	fPointBilin.resize(rowSize,columnSize,0,false,true);
 
+
+  /***************************************************************************/
+  /* Berrechnung der Affin Transformation									 */
+
+	
 	//transformationsparameter
 	//für x
 	const double a0 = 160.7916667;
@@ -102,6 +113,21 @@ namespace lti {
 	const double b0 = 218.7416667;
 	const double b1 = 0.001666667;
 	const double b2 = 0.4925;
+
+  /***************************************************************************/
+
+  /***************************************************************************/
+  /* Berrechnung der 4 Punkte Transformation								 */
+
+	double sumPhiX, sumPhiY;
+	double phiX1, phiX2, phiX3, phiX4;
+	double phiY1, phiY2, phiY3, phiY4;
+
+	const double x1 = 193,x2 = 585,x3 = 95,x4 = 667;
+	const double y1 = 99,y2 = 94,y3 = 471,y4 = 477; 
+
+
+ /***************************************************************************/
 
 
     //iterate over all pixels
@@ -114,10 +140,39 @@ namespace lti {
 			double sX = (a0 + a1 * x + a2 * y);
 			double sY = (b0 + b1 * x + b2 * y);
 
+			//calculate four points transormation
+			//--------------begin----------------
+			//TODO
+			double x1Hut = x / columnSize-1;
+			double x2Hut = x / columnSize-1;
+			double x3Hut = x / columnSize-1;
+			double x4Hut = x / columnSize-1;
+
+			double y1Hut = y / rowSize-1;
+			double y2Hut = y / rowSize-1;
+			double y3Hut = y / rowSize-1;
+			double y4Hut = y / rowSize-1;
+
+			phiX1 = (1-x1Hut)*(1-y1Hut);
+			phiX2 = (x2Hut)*(1-y2Hut);
+			phiX3 = (x3Hut)*(y3Hut);
+			phiX4 = (1-x4Hut)*(y4Hut);
+
+			phiY1 = (1-x1Hut)*(1-y1Hut);
+			phiY2 = (x2Hut)*(1-y2Hut);
+			phiY3 = (x3Hut)*(y3Hut);
+			phiY4 = (1-x4Hut)*(y4Hut);
+
+			sumPhiX = phiX1 + phiX2 + phiX3 + phiX4;
+			sumPhiY = phiY1 + phiY2 + phiY3 + phiY4;
+			//--------------end------------------
+
 			if(checkBorder(x,columnSize) && checkBorder(y, rowSize) && checkBorder(sX, columnSize) && checkBorder(sY, rowSize))
 			{
 				affinNNI[y][x] = src[(int)(sY+0.5)][(int)(sX+0.5)];
 				affinBilin[y][x] = bilinInterpol(sX,sY,src);
+				fPointNNI[y][x] = src[(int)(sumPhiY+0.5)][(int)(sumPhiX+0.5)];
+				fPointBilin[y][x] = bilinInterpol(sumPhiX,sumPhiY,src);
 			}
 		}
 	}
@@ -125,8 +180,10 @@ namespace lti {
 
 	// view pictures
     view.show(src);
-	viewTransformed.show(affinNNI);
-	viewbilin.show(affinBilin);
+	viewAffiNNI.show(affinNNI);
+	viewAffiBilin.show(affinBilin);
+	view4PointNNI.show(fPointNNI);
+	view4PointBilin.show(fPointBilin);
 
     getchar();
 
