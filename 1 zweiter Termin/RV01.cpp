@@ -89,8 +89,8 @@ namespace lti {
     splitter.getIntensity(img,src);
 
     // determine image size
-    const int rowSize    = src.rows();
-    const int columnSize = src.columns();
+    const double rowSize    = src.rows();
+    const double columnSize = src.columns();
 
 
     // set destination size to source size 
@@ -123,17 +123,18 @@ namespace lti {
 	double phiX1, phiX2, phiX3, phiX4;
 	double phiY1, phiY2, phiY3, phiY4;
 
-	const double x1 = 193,x2 = 585,x3 = 95,x4 = 667;
-	const double y1 = 99,y2 = 94,y3 = 471,y4 = 477; 
+	const double x1 = 95.0, x2 = 193.0, x3 = 585.0, x4 = 667.0;
+	const double y1 = 471.0, y2 = 99.0, y3 = 94.0, y4 = 477.0; 
 
 
  /***************************************************************************/
 
 
     //iterate over all pixels
-	for(int y=0; y<rowSize; y++)
+	//must be double
+	for(double y=0.0; y<rowSize; y++)
 	{
-		for(int x=0; x<columnSize; x++)
+		for(double x=0.0; x<columnSize; x++)
 		{
 			//calculate affin tranformation
 			//affinnni is the output picture
@@ -143,28 +144,24 @@ namespace lti {
 			//calculate four points transormation
 			//--------------begin----------------
 			//TODO
-			double x1Hut = x / columnSize-1;
-			double x2Hut = x / columnSize-1;
-			double x3Hut = x / columnSize-1;
-			double x4Hut = x / columnSize-1;
+			double xHut = x / (columnSize-1);
+			double yHut = y / (rowSize-1);
+	
+			phiX1 = (1-xHut)*(1-yHut);
+			phiX2 = (xHut)*(1-yHut);
+			phiX3 = (xHut)*(yHut);
+			phiX4 = (1-xHut)*(yHut);
 
-			double y1Hut = y / rowSize-1;
-			double y2Hut = y / rowSize-1;
-			double y3Hut = y / rowSize-1;
-			double y4Hut = y / rowSize-1;
+			phiY1 = (1-xHut)*(1-yHut);
+			phiY2 = (xHut)*(1-yHut);
+			phiY3 = (xHut)*(yHut);
+			phiY4 = (1-xHut)*(yHut);
 
-			phiX1 = (1-x1Hut)*(1-y1Hut);
-			phiX2 = (x2Hut)*(1-y2Hut);
-			phiX3 = (x3Hut)*(y3Hut);
-			phiX4 = (1-x4Hut)*(y4Hut);
+			//sumPhiX = phiX1 + phiX2 + phiX3 + phiX4;
+			//sumPhiY = phiY1 + phiY2 + phiY3 + phiY4;
 
-			phiY1 = (1-x1Hut)*(1-y1Hut);
-			phiY2 = (x2Hut)*(1-y2Hut);
-			phiY3 = (x3Hut)*(y3Hut);
-			phiY4 = (1-x4Hut)*(y4Hut);
-
-			sumPhiX = phiX1 + phiX2 + phiX3 + phiX4;
-			sumPhiY = phiY1 + phiY2 + phiY3 + phiY4;
+			sumPhiX = phiX1 * x1 + phiX2 * x2 + phiX3 * x3 + phiX4 * x4;
+			sumPhiY = phiY1 * y1 + phiY2 * y2 + phiY3 * y3 + phiY4 * y4;
 			//--------------end------------------
 
 			if(checkBorder(x,columnSize) && checkBorder(y, rowSize) && checkBorder(sX, columnSize) && checkBorder(sY, rowSize))
@@ -224,6 +221,4 @@ namespace lti {
 
 	  return fy;
   }
-
-
 };
